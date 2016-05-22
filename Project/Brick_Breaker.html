@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <meta charset="utf-8" />
+
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <script src="http://code.jquery.com/jquery-1.12.1.min.js">
+    </script>
+    <script type="text/javascript" src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js">
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="Opmaak.Css" />
+</head>
+
+<body onload="Open()" id="body">
+
+    <script type="text/javascript">
+        "use strict";
+        /*global $, console, openDatabase */
+        var i, y, brick, /*iets*/plaats;
+        var breedte = 100;
+        var k = 1;
+        /*k = quantity rows(top)*/
+        var xposBal, xposbrick ;
+        var yposBal, yposbrick; 
+        var intervalbal;
+        var tellerx = 3;
+        var tellery = -1;
+        var moving, side, bal, endgame;
+        var wall = [];
+        var tp = [],lf = [];
+        var getelementtop, getelementleft;
+        var muispositiex,muispositiey;
+
+
+        function Open() {
+            var btn = document.getElementById('startButton');
+            btn.style.left = 50 + '%';
+            btn.style.top = 90 + '%';
+            btn.style.width = 100 + 'px';
+            btn.style.marginLeft = -50 + 'px';
+            btn.style.marginRight = -50 + 'px';
+        }
+
+        function StartGame() {
+            
+                
+             /*document.write("<div id ='background' style='position: absolute;z-index: -1; background-image: url(Image/Hd-Background-6CA.jpg)'> </div>");
+            var achtergrond = document.getElementById ('background');
+            achtergrond.style.height = '100%';
+            achtergrond.style.width = '100%';
+            */
+            
+            
+            
+            
+            
+            document.getElementById('startButton').style.display = "none";
+            /*Create the wall*/    
+            while (k < 10) {
+                 
+                /*i = quentity colums for each row(left) */
+                for (i = 1; i < 10; i++) {
+                    document.write("<div id ='" + k.toString() + "block" + i.toString() + "' style='position: absolute;'> </div>");
+                    document.getElementById(k.toString() + 'block' + i.toString()).style.backgroundColor = 'red';
+                    document.getElementById(k.toString() + 'block' + i.toString()).style.top = 25 * k + 'px';
+                    document.getElementById(k.toString() + 'block' + i.toString()).style.height = 25 + 'px';
+                    document.getElementById(k.toString() + 'block' + i.toString()).style.width = 5 + '%';
+                    document.getElementById(k.toString() + 'block' + i.toString()).style.left = (20 + i * 5) + '%';
+                    document.getElementById(k.toString() + 'block' + i.toString()).style.border = " solid #000000";
+                    wall.push(k.toString()+'block'+ i.toString());
+                    getelementtop = document.getElementById(k.toString() + 'block' + i.toString());
+
+                }
+
+                k++;
+                     tp.push($(getelementtop).offset().top);
+
+            }
+            
+            for(i = 1; i < 10; i++)
+            {
+                getelementleft = document.getElementById('1block' + i.toString());
+                lf.push($(getelementleft).offset().left);
+            }
+            /*Create the moving block*/
+            document.write("<div id='MovingBlock' style='position: absolute;'></div>");
+            moving = document.getElementById('MovingBlock');
+            moving.style.backgroundColor = 'blue';
+            moving.style.top = 90 + '%';
+            moving.style.height = 25 + 'px';
+            moving.style.width = 15 + '%';
+            moving.style.left = 45 + '%';
+            
+           /* make the bal*/
+            document.write("<div id='ball' style='position: absolute;'></div>");
+            bal = document.getElementById('ball');
+            bal.style.backgroundColor = 'green';
+            bal.style.borderRadius = 50 +'px';
+            bal.style.height = 25 +'px';
+            bal.style.width = 25 + 'px';
+            bal.style.top = 85 + '%';
+            bal.style.left = 45 + '%';
+            bal.style.bottom = 10 + 'px';
+            
+            xposBal = $(bal).offset().left;
+            yposBal = $(bal).offset().top;
+            
+            intervalbal = setInterval(movebal,3);
+           
+            function movebal(){
+
+                xposBal+= tellerx;
+                yposBal+= tellery;
+                if(yposBal < 0)
+                {
+                    tellery *= -1;
+                
+                }
+                /* When the ball gets below the moving block*/
+                if(yposBal > $(moving).offset().top)
+                {
+                    
+                    $('body').css('cursor', 'default');                    
+                    $(document).off("mousemove");
+                    clearInterval(intervalbal);  
+                }
+                
+                /*side from right then ture */
+                if(xposBal +25 > window.innerWidth)
+                {
+                    tellerx *= -1;
+                    side = true;
+                }
+                /* side from left false*/
+                if(xposBal < 0)
+                {
+                    tellerx *= -1;
+                    side = false;
+                }
+                /*Hit Detection left halfside*/
+                if(xposBal > $(moving).offset().left && xposBal < $(moving).offset().left + moving.offsetWidth/2 && yposBal + 25 > $(moving).offset().top)
+                {
+                    tellery *= -1;
+                    if(side == false)
+                    {
+                        tellerx *= -1;
+                    }
+
+                }
+                
+                /*Hit detection right halfside*/
+                if(xposBal > $(moving).offset().left + moving.offsetWidth/2 && xposBal < $(moving).offset().left + moving.offsetWidth && yposBal + 25 > $(moving).offset().top)
+                {
+                    tellery *= -1;
+                    if(side)
+                    {
+                        tellerx *= -1;
+                    }
+
+                }
+                
+                
+                /*Dit heb ik geprobeerd te gebruiken onm de bal met de wall te kunnen botsen, maar wekt niet voor een of ander reden*/
+               /*             
+                for(brick = 0; brick < wall.length; brick++)
+                {
+                    iets = document.getElementById(wall[brick]);
+                    
+                 if(xposBal > $(iets).offset().left && xposBal < $(iets).offset().left  && yposBal < $(iets).offset().top +25 )
+                    {
+                        alert("hit");
+                    }
+                 if(brick == wall.length + 1)
+                 {
+                     brick = 0;
+                 }
+   
+                }*/
+ 
+                $(bal).css("left", xposBal + "px");
+                $(bal).css("top", yposBal + "px");
+
+            }
+
+          $(document).on('mousemove',function (e) {      
+                    moving.style.left = e.pageX;
+                   }); 
+            
+ 
+               $('body').css('cursor', 'none');
+            
+           
+
+        }
+
+
+    </script>
+
+
+    <button id='startButton' onclick="StartGame()" style="position: absolute; z-index: 2">Start</button>
+    <img src="Image/Hd-Background-6CA.jpg" width="100%" height="100%" style="position: absolute; z-index: 1">
+
+
+</body>
+
+</html>
