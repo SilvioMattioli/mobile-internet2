@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="nl">
 
@@ -18,7 +19,7 @@
     <script type="text/javascript">
         "use strict";
         /*global $, console, openDatabase */
-        var i, y, brick, countaway,iets,plaats;
+        var i, y, brick,iets,plaats;
         var breedte = 100;
         var k = 1;
         /*k = quantity rows(top)*/
@@ -32,8 +33,7 @@
         var tp = [],lf = [];
         var getelementtop, getelementleft;
         var muispositiex,muispositiey;
-
-
+        var countaway = 0;
         function Open() {
             var btn = document.getElementById('startButton');
             btn.style.left = 50 + '%';
@@ -42,7 +42,6 @@
             btn.style.marginLeft = -50 + 'px';
             btn.style.marginRight = -50 + 'px';
         }
-
         function StartGame() {
             
                 
@@ -71,12 +70,9 @@
                     document.getElementById(k.toString() + 'block' + i.toString()).style.border = " solid #000000";
                     wall.push(k.toString()+'block'+ i.toString());
                     getelementtop = document.getElementById(k.toString() + 'block' + i.toString());
-
                 }
-
                 k++;
                      tp.push($(getelementtop).offset().top);
-
             }
             
             for(i = 1; i < 10; i++)
@@ -110,7 +106,6 @@
             intervalbal = setInterval(movebal,3);
            
             function movebal(){
-
                 xposBal+= tellerx;
                 yposBal+= tellery;
                 if(yposBal < 0)
@@ -147,7 +142,6 @@
                     {
                         tellerx *= -1;
                     }
-
                 }
                 
                 /*Hit detection right halfside*/
@@ -158,7 +152,6 @@
                     {
                         tellerx *= -1;
                     }
-
                 }
                 
                 
@@ -198,9 +191,7 @@
                     clearInterval(intervalbal);  
                     alert(" u heeft de game gewonnen!!!");
                 }
-
             }
-
           $(document).on('mousemove',function (e) {      
                     moving.style.left = e.pageX;
                    }); 
@@ -209,10 +200,7 @@
                $('body').css('cursor', 'none');
             
            
-
         }
-
-
     </script>
 
 
@@ -223,3 +211,5 @@
 </body>
 
 </html>
+Status API Training Shop Blog About
+© 2016 GitHub, Inc. Terms Privacy Security Contact Help
